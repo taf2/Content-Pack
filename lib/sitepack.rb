@@ -3,6 +3,7 @@ require 'pathname'
 
 require 'hpricot'
 require 'redcloth'
+require 'erubis'
 
 module SitePack
   RackDefaultEnv = {
@@ -136,6 +137,8 @@ module SitePack
           @body = RedCloth.new(@body.inner_html).to_html
         when 'html'
           @body = @body.inner_html
+        when 'erubis'
+          @body = Erubis::Eruby.new(@body.inner_html).result(binding())
         else
           halt 500, "Unsupported filter: #{filter} when rendering #{file_path}"
         end

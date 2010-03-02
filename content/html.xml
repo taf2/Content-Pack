@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<page>
+  <title>Home Page</title>
+  <body filter="html">
+<h1>we have html tags</h1>
+  </body>
+</page>

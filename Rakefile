@@ -8,7 +8,12 @@ SiteDir = "site".freeze
 DistFiles = Dir["public/**"].freeze
 SiteDomain = "test.domain.com".freeze
 
-task :default => :package
+task :default => :test
+
+desc "Test it"
+task :test do
+  sh "ruby test.rb"
+end
 
 desc "Update Static Pages"
 task :package => :clean do

@@ -33,6 +33,18 @@ class TestApp < Test::Unit::TestCase
     assert_match /Home Page/, last_response.body
   end
 
+  def test_html
+    get '/html.html'
+    assert_equal 200, last_response.status
+    assert_match /<h1>we have html tags<\/h1>/, last_response.body
+  end
+
+  def test_erubis
+    get '/erubis.html'
+    assert_equal 200, last_response.status
+    assert_match /Yes this is erubis/, last_response.body
+  end
+
   def test_package
     system("mv content/badcontent.xml .")
     system("rake package")
