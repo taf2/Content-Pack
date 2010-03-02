@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<page>
+  <title>Service Foo</title>
+  <body template="wizbang">
+h1. The Foo Services
+
+A *simple* paragraph with
+a line break, some _emphasis_ and a "link":http://redcloth.org
+
+* an item
+* and another
+
+# one
+# two
+  </body>
+</page>

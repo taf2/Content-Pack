@@ -1,0 +1,9 @@
+Sinatra Static Pages
+--------------------
+
+Sinatra makes websites easy, but when it's time to deploy running ruby can be a pain.
+
+ContentPack makes it easy.  Just export your sinatra application as static html and upload to any webserver - Done!
+
+All the power of ruby, but really how many times are you changing that content and why can't you traverse your content store 
+before deploying.  Do you really have so many pages you need a database for every request?
