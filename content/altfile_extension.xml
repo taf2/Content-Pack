@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<page extension="php">
+  <title>Page</title>
+  <body filter="html">
+<h1>Give RedCloth a try!</h1>
+<? echo 'hello' ?>
+<p>A simple paragraph</p>
+
+<ul>
+<li>an item</li>
+<li>and another</li>
+</ul>
+<ol>
+<li>one</li>
+<li>two</li>
+</ol>
+  </body>
+</page>
