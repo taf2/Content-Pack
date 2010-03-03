@@ -49,19 +49,24 @@ module SitePack
     # or return an array of all paths
     #
     def content(dir)
+      @content_dir = dir
       dir_path = Pathname.new(File.expand_path(dir))
       paths = Dir["#{dir}/**/**.xml"].map{|p| Pathname.new(File.expand_path(p)).relative_path_from(dir_path) }
       paths.each {|p| yield p } if block_given?
+      @content_dir = nil
       paths
     end
 
     #
-    # save a given url into the site URL
+    # save a given path into the site output directory
     # 
     def save(path)
-      html_path = path.sub(/\.xml$/,'.html')
-      file = "#{@sitedir}/#{html_path}"
-      url = "http://#{@domain}/#{html_path}"
+      doc = Hpricot.XML(File.read(File.expand_path(File.join(@content_dir, path))))
+      ext = doc.at(:page)['extension'] || 'html'
+ 
+      output_path = path.sub(/\.xml$/,".#{ext}")
+      file = "#{@sitedir}/#{output_path}"
+      url = "http://#{@domain}/#{output_path}"
       env = RackDefaultEnv.dup
       uri = URI.parse(url)
       env['PATH_INFO'] = uri.path
@@ -75,9 +80,11 @@ module SitePack
         puts "render: #{url} as #{file}"
         FileUtils.mkdir_p(File.dirname(file)) unless File.exist?(File.dirname(file))
         File.open(file,'wb') { |f| f << res.body }
+        return file 
       else
         raise "error #{status} status code: #{status} when requesting: #{url}\n#{res.body}"
       end
+      nil
     end
   end
 

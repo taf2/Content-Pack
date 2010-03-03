@@ -52,8 +52,15 @@ class TestApp < Test::Unit::TestCase
     assert File.exist?("site/page2.html")
     assert File.exist?("site/services/foo.html")
     assert File.exist?("site/404.html")
+    assert File.exist?("site/altfile_extension.php")
   ensure
     system("mv badcontent.xml content/badcontent.xml")
+  end
+
+  def test_alt_extensions
+    get '/altfile_extension.php'
+    assert_equal 200, last_response.status
+    assert_match /<\? echo 'hello' \?>/, last_response.body
   end
 
 end

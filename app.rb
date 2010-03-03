@@ -12,7 +12,7 @@ class App < Sinatra::Application
     halt 302, {'Location' => '/index.html'}, ['']
   end
 
-  get '/*.html' do
+  get '/*.:ext' do
     erb site_content(options.content_path, params)
   end
 
