@@ -135,24 +135,34 @@ module SitePack
       halt 404, "page not found: #{file_path.inspect}" unless File.exists?(file_path)
       doc = Hpricot.XML(File.read(file_path))
       @title = doc.at(:title) ? doc.at(:title).inner_html : nil
-      @body = doc.at(:body)
-      if @body
-        template = @body[:template] || 'page'
-        filter = @body[:filter] || 'redcloth'
-        case filter
-        when 'redcloth'
-          @body = RedCloth.new(@body.inner_html).to_html
-        when 'html'
-          @body = @body.inner_html
-        when 'erubis'
-          @body = Erubis::Eruby.new(@body.inner_html).result(binding())
-        else
-          halt 500, "Unsupported filter: #{filter} when rendering #{file_path}"
-        end
+      body = doc.at(:body)
+      if body
+        template = body[:template] || 'page'
+        @body = content_processor(body)
       else
         halt 500, "Missing body tag!"
       end
+      footer = doc.at(:footer)
+      @footer = content_processor(footer) if footer
+      sidebar = doc.at(:sidebar)
+      @sidebar = content_processor(sidebar) if sidebar
+
       template.to_sym
+    end
+
+    def content_processor(node)
+      filter = node[:filter] || 'redcloth'
+      output = case filter
+      when 'redcloth'
+        RedCloth.new(node.inner_html).to_html
+      when 'html'
+        node.inner_html
+      when 'erubis'
+        Erubis::Eruby.new(node.inner_html).result(binding())
+      else
+        halt 500, "Unsupported filter: #{filter} when rendering #{file_path}"
+      end
+      output
     end
 
   end
