@@ -125,11 +125,13 @@ module SitePack
   # filter   = by default is redcloth, but can be html -> in which case use <![CDATA[ html ]]>
   #
   module Config
-    def site_vars(yaml_file)
-      @vars = YAML.load_file(yaml_file)['vars']
+    def site_pack_config(yaml_file)
+      config = YAML.load_file(yaml_file)
+      @vars = config['vars']
+      @filter = config['filter'] || 'redcloth'
     end
-    def get_vars
-      @vars
+    def _site_pack_get_opt(opt)
+      instance_variable_get("@#{opt}".to_sym)
     end
   end
   module Content
@@ -151,7 +153,7 @@ module SitePack
       else
         halt 500, "Missing body tag!"
       end
-      vars = self.class.get_vars
+      vars = self.class._site_pack_get_opt('vars')
       if vars and vars.respond_to?(:each)
         vars.each do|var|
           node = doc.at(var.to_sym)
@@ -159,13 +161,13 @@ module SitePack
         end
       end
       sidebar = doc.at(:sidebar)
-      @sidebar = content_processor(sidebar) if sidebar
+      @sidebar = content_processor(sidebar,self.class._site_pack_get_opt('filter')) if sidebar
 
       template.to_sym
     end
 
-    def content_processor(node)
-      filter = node[:filter] || 'redcloth'
+    def content_processor(node,default_filter='redcloth')
+      filter = node[:filter] || default_filter
       output = case filter
       when 'redcloth'
         RedCloth.new(node.inner_html).to_html

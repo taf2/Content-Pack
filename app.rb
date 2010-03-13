@@ -11,7 +11,7 @@ class App < Sinatra::Application
   set :public, 'public'
 
   configure do
-    site_vars("vars.yml")
+    site_pack_config("vars.yml")
   end
 
   get '/' do
