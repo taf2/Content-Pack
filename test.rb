@@ -60,7 +60,16 @@ class TestApp < Test::Unit::TestCase
   def test_alt_extensions
     get '/altfile_extension.php'
     assert_equal 200, last_response.status
-    assert_match /<\? echo 'hello' \?>/, last_response.body
+    assert_match /<\? echo 'hello' \?>/, last_response.body # /
+  end
+
+  def test_extravars
+    get '/extravars.html'
+    assert_equal 200, last_response.status
+
+    assert_match(/footer/,last_response.body)
+    assert_match(/sidebar/,last_response.body)
+    assert_match(/head/,last_response.body)
   end
 
 end

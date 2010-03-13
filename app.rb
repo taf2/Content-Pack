@@ -5,8 +5,14 @@ require 'sitepack'
 
 class App < Sinatra::Application
   include SitePack::Content
+  extend SitePack::Config
+
   set :content_path, 'content'
   set :public, 'public'
+
+  configure do
+    site_vars("vars.yml")
+  end
 
   get '/' do
     halt 302, {'Location' => '/index.html'}, ['']

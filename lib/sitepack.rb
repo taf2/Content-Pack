@@ -124,7 +124,16 @@ module SitePack
   # template = by default is page, e.g. views/page.erb
   # filter   = by default is redcloth, but can be html -> in which case use <![CDATA[ html ]]>
   #
+  module Config
+    def site_vars(yaml_file)
+      @vars = YAML.load_file(yaml_file)['vars']
+    end
+    def get_vars
+      @vars
+    end
+  end
   module Content
+
 
     def site_content(content_path, params)
       if params[:splat].nil?
@@ -142,8 +151,13 @@ module SitePack
       else
         halt 500, "Missing body tag!"
       end
-      footer = doc.at(:footer)
-      @footer = content_processor(footer) if footer
+      vars = self.class.get_vars
+      if vars and vars.respond_to?(:each)
+        vars.each do|var|
+          node = doc.at(var.to_sym)
+          instance_variable_set("@#{var}".to_sym, content_processor(node)) if node
+        end
+      end
       sidebar = doc.at(:sidebar)
       @sidebar = content_processor(sidebar) if sidebar
 
