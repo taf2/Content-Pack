@@ -129,6 +129,8 @@ module SitePack
       config = YAML.load_file(yaml_file)
       @vars = config['vars']
       @filter = config['filter'] || 'redcloth'
+      @verbose = config['verbose']
+      puts "Site Pack!\nVars:#{@vars.inspect}\nFilter(default):#{@filter.inspect}" if @verbose
     end
     def _site_pack_get_opt(opt)
       instance_variable_get("@#{opt}".to_sym)
@@ -161,13 +163,14 @@ module SitePack
         end
       end
       sidebar = doc.at(:sidebar)
-      @sidebar = content_processor(sidebar,self.class._site_pack_get_opt('filter')) if sidebar
+      @sidebar = content_processor(sidebar) if sidebar
 
       template.to_sym
     end
 
-    def content_processor(node,default_filter='redcloth')
-      filter = node[:filter] || default_filter
+    def content_processor(node)
+      filter = node[:filter] || self.class._site_pack_get_opt('filter')
+      puts "Render(#{node.name.inspect}) with #{filter.inspect}" if self.class._site_pack_get_opt('verbose')
       output = case filter
       when 'redcloth'
         RedCloth.new(node.inner_html).to_html
